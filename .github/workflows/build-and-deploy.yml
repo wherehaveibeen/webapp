@@ -13,10 +13,12 @@ jobs:
         npm i --prod-only --no-audit
         npm run build
     - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+      uses: appleboy/gh-pages-action@v0.0.2
       with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: master
-        FOLDER: dist
-        REPOSITORY_NAME: wherehaveibeen/wherehaveibeen.github.io
+        username: SplinterHead
+        password: ${{ secrets.ACCESS_TOKEN }}
+        remote_url: https://github.com/wherehaveibeen/wherehaveibeen.github.io
+        target_branch: master
+        pages_directory: dist
+        commit_author: SplinterHead
+        commit_author_email: lewis2004@hotmail.com

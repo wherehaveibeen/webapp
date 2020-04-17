@@ -13,7 +13,7 @@ jobs:
         npm i --prod-only --no-audit
         npm run build
     - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action
+      uses: JamesIves/github-pages-deploy-action@3.4.8
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: master

@@ -20,5 +20,3 @@ jobs:
         FOLDER: dist
         CLEAN: true
         REPOSITORY_NAME: wherehaveibeen/wherehaveibeen.github.io
-        GIT_CONFIG_NAME: ${{ secrets.GIT_USERNAME }}
-        GIT_CONFIG_EMAIL: ${{ secrets.GIT_EMAIL }}

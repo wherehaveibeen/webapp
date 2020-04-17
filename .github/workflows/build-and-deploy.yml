@@ -15,10 +15,10 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: appleboy/gh-pages-action@v0.0.2
       with:
-        username: SplinterHead
+        username: ${{ secrets.GIT_USERNAME }}
         password: ${{ secrets.ACCESS_TOKEN }}
         remote_url: https://github.com/wherehaveibeen/wherehaveibeen.github.io
         target_branch: master
         pages_directory: dist
-        commit_author: SplinterHead
-        commit_author_email: lewis2004@hotmail.com
+        commit_author: ${{ secrets.GIT_NAME }}
+        commit_author_email: ${{ secrets.GIT_EMAIL }}

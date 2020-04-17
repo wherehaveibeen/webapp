@@ -89,25 +89,12 @@
                   </b-alert>
                 </b-row>
               </div>
-                <b-row id="submit-btn" class="align-self-end">
-                  <b-button @click="onCheckInSubmit()">Check In</b-button>
-                </b-row>
-              <!-- <div class="mb-auto bd-highlight dangerous-checkins" v-if="filteredDangers.length > 0">
-                <span class="title">This place could be contagious</span>
-                <b-row no-gutters
-                  v-bind:class="{'even':index % 2 == 0, 'odd':index %2 > 0}"
-                  v-for="(danger, index) in filteredDangers"
-                  :key="index">
-                  <b-row>
-                    <b-col md="6">
-                      <span>{{danger.Distance}} meters away</span>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <span>{{danger.CheckIn}} - {{danger.CheckOut}}</span>
-                  </b-row>
-                </b-row>
-              </div> -->
+              <b-row id="risk-warning" class="align-self-end" v-if="filteredDangers.length > 0">
+                <font-awesome-icon icon="virus" /> Potential Risk
+              </b-row>
+              <b-row id="submit-btn" class="align-self-end">
+                <b-button @click="onCheckInSubmit()">Check In</b-button>
+              </b-row>
             </b-card-body>
           </b-col>
         </b-row>
@@ -146,8 +133,8 @@ export default {
       showSuccessAlert: false,
       showFailureAlert: false,
       hideGeolocateToolTip: true,
-      // dangers:[],
-      // filteredDangers:[]
+      dangers:[],
+      filteredDangers:[]
     }
   },
   mounted () {
@@ -195,7 +182,7 @@ export default {
       this.zoomLevel = 16
       this.center.lat = this.currentPlace.geometry.location.lat()
       this.center.lng = this.currentPlace.geometry.location.lng()
-      // this.onGetRiskyVisits();
+      this.onGetRiskyVisits();
     },
     timeoutGeoLocate () {
       this.geolocate()
@@ -221,7 +208,7 @@ export default {
         }
         this.locatingUser = false
         this.clearMapQuery()
-        // this.onGetRiskyVisits()
+        this.onGetRiskyVisits()
       })
     },
     clickedOnMap (e) {
@@ -237,7 +224,7 @@ export default {
       } else {
         this.currentPlace = {}
       }
-      // this.onGetRiskyVisits();
+      this.onGetRiskyVisits();
     },
     onCheckInSubmit () {
       let userToken = this.$store.getters.getUserToken
@@ -275,40 +262,33 @@ export default {
         this.api.errors.push(e)
       })
     },
-    // onGetRiskyVisits () {
-    //   let userId = this.$store.getters.getUserId
-    //   let lat = this.center.lat
-    //   let lng = this.center.lng
+    onGetRiskyVisits () {
+      let userId = this.$store.getters.getUserId
+      let lat = this.center.lat
+      let lng = this.center.lng
 
-    //   this.$http.get(
-    //     this.api.endpoint + '/risk/visit?userId=' + userId + '&lat=' + lat + '&lng=' + lng
-    //   ).then(response => {
-    //     this.dangers = response.data
-    //     // this.filterRisk(this.checkInDate)
-    //   })
-    // },
-    // filterRisk (date) {
-    //   if (date === undefined) {
-    //     return
-    //   }
-    //   let dangers = []
-    //   this.dangers.forEach(danger => {
-    //     if (danger.CheckIn.indexOf(date) > -1) {
-    //       dangers.push(danger)
-    //     }
-    //   })
-    //   // for (let i = 0; i < this.dangers.length; i++) {
-    //   //   let danger = this.dangers[i]
-
-    //   //   if (danger.CheckIn.indexOf(date) > -1) {
-    //   //     dangers.push(danger)
-    //   //   }
-    //   // }
-    //   this.filteredDangers = dangers
-    // },
-    // dateChanged () {
-    //   this.filterRisk(this.checkInDate)
-    // }
+      this.$http.get(
+        this.api.endpoint + '/risk/visit?userId=' + userId + '&lat=' + lat + '&lng=' + lng
+      ).then(response => {
+        this.dangers = response.data
+        this.filterRisk(this.checkInDate)
+      })
+    },
+    filterRisk (date) {
+      if (date === undefined) {
+        return
+      }
+      let dangers = []
+      this.dangers.forEach(danger => {
+        if (danger.CheckIn.indexOf(date) > -1) {
+          dangers.push(danger)
+        }
+      })
+      this.filteredDangers = dangers
+    },
+    dateChanged () {
+      this.filterRisk(this.checkInDate)
+    }
   }
 }
 </script>
@@ -328,37 +308,17 @@ export default {
 .place-container label {
   margin-right: 8px;
 }
-.bd-highlight, .card-title, #submit-alert, #submit-btn {
+.bd-highlight, .card-title, #submit-alert, #submit-btn, #risk-warning {
   width: 100%;
   text-align: center;
   justify-content: center;
   padding-bottom: 10px;
 }
-.danger-container {
-  background-color:#ffffcc;
-}
-.dangerous-checkins .title {
-  display:block;
-  width:100%;
-  font-weight: bold;
-  text-align: center;
-  margin: 12px 0;
-  background-color: #ffdddd;
-}
-.dangerous-checkins .even {
-  background-color: #ffffcc;
-}
-.dangerous-checkins .odd {
-  background-color: #ffdddd;
-}
-#dangerous-checkins span {
-  display:inline-block
-}
-#submit-alert, #submit-btn {
+#submit-alert, #submit-btn #risk-warning {
   padding-left: 25px;
 }
-  .at-risk {
-    color: red;
-    font-weight: bold;
-  }
+.at-risk {
+  color: red;
+  font-weight: bold;
+}
 </style>

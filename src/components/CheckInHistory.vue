@@ -132,7 +132,8 @@ export default {
       this.$http.get(this.api.endpoint + '/visit/risk?visitId=' + loc.VisitId)
         .then(response => {
           if (response.data && response.data.length > 0) {
-            loc.details = response.data
+            // loc.details = response.data
+            this.$set(loc, 'details', response.data)
           }
         })
         .catch(e => {
@@ -140,10 +141,13 @@ export default {
         })
     },
     toggleShowRiskyEncounters (loc) {
-      const isShown = !loc.showRiskyEncounters
-      loc.showRiskyEncounters = isShown
-      if (!isShown) return
-      this.getDetails(loc)
+      let isShown = !loc.showRiskyEncounters
+      this.$set(loc, 'showRiskyEncounters', isShown)
+      // loc.showRiskyEncounters = isShown
+      if (isShown) {
+        this.getDetails(loc)
+      }
+      
     },
     potentialRisk (location) {
       return !location.AtRisk && location.RiskyInteractions > 0
@@ -162,8 +166,7 @@ export default {
   .risk-label {
     display: flex;
   }
-  .risky-text .text
-  {
+  .risky-text .text {
     text-align:left;
     font-size: smaller;
     font-weight: lighter;

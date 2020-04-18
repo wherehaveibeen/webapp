@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: |
-        npm i --prod-only --no-audit
+        npm i --no-audit
         npm run build
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@3.4.8

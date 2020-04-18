@@ -18,5 +18,4 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: master
         FOLDER: dist
-        CLEAN: true
         REPOSITORY_NAME: wherehaveibeen/wherehaveibeen.github.io

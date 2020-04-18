@@ -15,7 +15,7 @@
         <b-tab title='Login' id='login-form-card' ref='loginTab'>
           <LoginForm />
         </b-tab>
-        <b-tab title='Register' id='register-form-card'>
+        <b-tab title='Register' id='register-form-card' ref='registerTab'>
           <RegisterForm @registrationComplete="registrationComplete()" />
         </b-tab>
       </b-tabs>

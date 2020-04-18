@@ -9,6 +9,7 @@ import {
   faBars,
   faBiohazard,
   faHandSparkles,
+  faInfoCircle,
   faVirus,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -23,6 +24,7 @@ Vue.prototype.$http = axios
 library.add(faBars)
 library.add(faBiohazard)
 library.add(faHandSparkles)
+library.add(faInfoCircle)
 library.add(faVirus)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)

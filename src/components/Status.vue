@@ -89,7 +89,7 @@ export default {
       }
       this.$http.post(this.api.endpoint + '/membership/' + endpoint,
         requestData,
-        {headers: { Authorization: "Bearer " + userToken }}
+        { headers: { Authorization: "Bearer " + userToken }}
       )
       .then(response => {
         this.api.responses.push(response)

@@ -34,13 +34,13 @@
               </b-col>
               <b-col sm="3" class="risk-label">
                 <span v-if="loc.AtRisk" class="at-risk">
-                  <font-awesome-icon icon="biohazard" /> Infectious
+                  <font-awesome-icon icon="biohazard" class="mr-1" />Infectious
                 </span>
                 <span class="risky" v-if="potentialRisk(loc)">
-                  <font-awesome-icon icon="virus" /> Potential Risk
+                  <font-awesome-icon icon="virus" class="mr-1" />Potential Risk
                 </span>
                 <span v-if="!loc.AtRisk && loc.RiskyInteractions === 0">
-                  <font-awesome-icon icon="hand-sparkles" /> Low Risk
+                  <font-awesome-icon icon="hand-sparkles" class="mr-1" />Low Risk
                 </span>
               </b-col>
             </b-row>

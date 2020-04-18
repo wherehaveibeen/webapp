@@ -3,7 +3,7 @@
     <h2>Where did you go today?</h2>
     <div class="instruction" >
       Search our map, tell us when and hit 'Check In'
-     </div>
+    </div>
     <gmap-autocomplete
       ref="autocomplete"
       style="width:75%"
@@ -17,7 +17,9 @@
       Failed to find your location<br/>
       Please check your Browser's permissions
     </b-tooltip>
-    <b-button disabled v-show="this.locatingUser" size="sm" class="ml-3"><b-spinner small></b-spinner></b-button>
+    <b-button disabled v-show="this.locatingUser" size="sm" class="ml-3">
+      <b-spinner small />
+    </b-button>
     <p/>
     <div id="search-result" v-if="this.currentPlace">
       <b-card no-body class="overflow-hidden">
@@ -39,7 +41,7 @@
               style="height: 100%;">
               <div class="place-container" >
                   <div v-if="this.userIsSick" class="at-risk">
-                    <font-awesome-icon icon="biohazard" /> At Risk
+                    <font-awesome-icon icon="biohazard" />At Risk
                   </div>
                 <div class="title" v-if="this.currentPlace.name">
                   {{ this.currentPlace.name }}
@@ -89,8 +91,10 @@
                   </b-alert>
                 </b-row>
               </div>
-              <b-row id="risk-warning" class="align-self-end" v-if="filteredDangers.length > 0">
-                <font-awesome-icon icon="virus" /> Potential Risk
+              <b-row id="risk-warning" class="align-self-end" v-if="dangers.length > 0">
+                <font-awesome-icon icon="virus" class="mr-1" />Potential Risk
+                <font-awesome-icon icon="info-circle" id="fa-info-circle" class="ml-2"
+                  @click="$bvModal.show('danger-checkin-modal')"/> 
               </b-row>
               <b-row id="submit-btn" class="align-self-end">
                 <b-button @click="onCheckInSubmit()">Check In</b-button>
@@ -100,6 +104,13 @@
         </b-row>
       </b-card>
     </div>
+    <b-modal id="danger-checkin-modal" ref="danger-checkin-modal" hide-header hide-footer>
+      <h2>Potentially infected check-ins</h2>
+      <ul>
+        <li v-for="(danger, index) in dangers" :key="index">{{ toHumanDate(danger.CheckIn) }}</li>
+      </ul>
+      <b-button variant="primary" @click="$bvModal.hide('danger-checkin-modal')">OK</b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -171,6 +182,9 @@ export default {
       let date = new Date()
       return moment(date).format('HH:mm:ss')
     },
+    toHumanDate (date) {
+      return moment(date).format('HH:mm DD/MM/YYYY')
+    },
     getPosition: function(marker) {
       return {
         lat: parseFloat(marker.lat),
@@ -182,7 +196,7 @@ export default {
       this.zoomLevel = 16
       this.center.lat = this.currentPlace.geometry.location.lat()
       this.center.lng = this.currentPlace.geometry.location.lng()
-      this.onGetRiskyVisits();
+      this.getRiskyVisits();
     },
     timeoutGeoLocate () {
       this.geolocate()
@@ -208,7 +222,6 @@ export default {
         }
         this.locatingUser = false
         this.clearMapQuery()
-        this.onGetRiskyVisits()
       })
     },
     clickedOnMap (e) {
@@ -218,13 +231,13 @@ export default {
       if (e.placeId) {
         this.$refs.map.$mapPromise.then(map => {
           const request = {placeId: e.placeId, fields: ['place_id', 'name', 'formatted_address']}
-          const service = new this.google.maps.places.PlacesService(map);
-          service.getDetails(request, (place) => this.currentPlace = place);
+          const service = new this.google.maps.places.PlacesService(map)
+          service.getDetails(request, (place) => this.currentPlace = place)
         })
       } else {
         this.currentPlace = {}
       }
-      this.onGetRiskyVisits();
+      this.getRiskyVisits()
     },
     onCheckInSubmit () {
       let userToken = this.$store.getters.getUserToken
@@ -243,51 +256,32 @@ export default {
       this.$http.post(
         this.api.endpoint + '/visit',
         requestData,
-        {
-          headers: {
-            Authorization: "Bearer " + userToken
-          }
-        }
+        { headers: { Authorization: "Bearer " + userToken }}
       )
       .then(response => {
         this.showFailureAlert = false
         this.showSuccessAlert = true
-        setTimeout(()=> {this.showSuccessAlert = false}, 3000)
+        setTimeout(()=> {this.showSuccessAlert = false}, 5000)
         this.api.responses.push(response)
       })
       .catch(e => {
         this.showSuccessAlert = false
         this.showFailureAlert = true
-        setTimeout(()=> {this.showFailureAlert = false}, 3000)
+        setTimeout(()=> {this.showFailureAlert = false}, 5000)
         this.api.errors.push(e)
       })
     },
-    onGetRiskyVisits () {
+    getRiskyVisits () {
       let userId = this.$store.getters.getUserId
       let lat = this.center.lat
       let lng = this.center.lng
 
       this.$http.get(
         this.api.endpoint + '/risk/visit?userId=' + userId + '&lat=' + lat + '&lng=' + lng
-      ).then(response => {
+      )
+      .then(response => {
         this.dangers = response.data
-        this.filterRisk(this.checkInDate)
       })
-    },
-    filterRisk (date) {
-      if (date === undefined) {
-        return
-      }
-      let dangers = []
-      this.dangers.forEach(danger => {
-        if (danger.CheckIn.indexOf(date) > -1) {
-          dangers.push(danger)
-        }
-      })
-      this.filteredDangers = dangers
-    },
-    dateChanged () {
-      this.filterRisk(this.checkInDate)
     }
   }
 }
@@ -320,5 +314,8 @@ export default {
 .at-risk {
   color: red;
   font-weight: bold;
+}
+#fa-info-circle {
+  cursor: pointer;
 }
 </style>

@@ -55,11 +55,7 @@ export default {
           this.$http.post(
             this.api.endpoint + '/visit/delete/' + userId,
             requestData,
-            {
-              headers: { 
-                Authorization: "Bearer " + userToken
-              }
-            }
+            { headers: { Authorization: "Bearer " + userToken }}
           )
           .then(response => {
             this.api.reponses.push(response)
@@ -91,11 +87,7 @@ export default {
           this.$http.post(
             this.api.endpoint + '/membership/delete/' + userId,
             requestData,
-            {
-              headers: { 
-                Authorization: "Bearer " + userToken
-              }
-            }
+            { headers: { Authorization: "Bearer " + userToken }}
           )
           .then(response => {
             this.$store.dispatch('storeUserAuth', undefined)
